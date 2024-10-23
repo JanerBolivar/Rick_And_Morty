@@ -40,6 +40,7 @@ const AlienPage = () => {
             characters.map((character) => (
               <CardView
                 key={character.id}
+                id={character.id}
                 name={character.name}
                 image={character.image}
                 species={character.species}

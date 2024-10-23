@@ -1,57 +1,71 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import CardView from '../../components/CardView';
 
-const AlienPage = () => {
-  const [characters, setCharacters] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const CharacterPage = () => {
+  const { id } = useParams();
+  const [character, setCharacter] = useState({});
 
   useEffect(() => {
-    const fetchAlienCharacters = async () => {
-      try {
-        const response = await axios.get('https://rickandmortyapi.com/api/character/', {
-          params: {
-            species: 'Alien'
-          }
-        });
-        setCharacters(response.data.results);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-        setLoading(false);
-      }
-    };
-    fetchAlienCharacters();
-  }, []);
+    axios.get(`https://rickandmortyapi.com/api/character/${id}`)
+      .then(response => {
+        setCharacter(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, [id]);
 
   return (
-    <section className="py-32">
-      <div className="max-w-screen-xl mx-auto px-4 md:px-8">
-        <h1 className="text-gray-800 text-3xl font-extrabold sm:text-4xl text-center mb-8">
-          Personajes Alienigenas
-        </h1>
-        <ul className="flex flex-wrap justify-center gap-x-8 gap-y-10 mt-16">
-          {loading ? (
-            <p>Cargando...</p>
-          ) : error ? (
-            <p>Error: {error.message}</p>
-          ) : (
-            characters.map((character) => (
-              <CardView
-                key={character.id}
-                name={character.name}
-                image={character.image}
-                species={character.species}
-                location={character.location.name}
-                url={character.url}
-              />
-            ))
-          )}
-        </ul>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">{character.name}</h1>
+      <div className="flex flex-wrap -mx-4">
+        <div className="w-full md:w-1/3 xl:w-1/4 px-4 mb-4">
+          <img
+            src={character.image}
+            alt={character.name}
+            className="w-full h-48 object-cover rounded-lg"
+          />
+        </div>
+        <div className="w-full md:w-2/3 xl:w-3/4 px-4 mb-4 flex justify-start">
+          <div className="w-1/2">
+            <h2 className="text-2xl font-bold mb-2">Información</h2>
+            <ul className="text-lg">
+              <li className="mb-2">
+                <span className="font-bold">Estado:</span> {character.status}
+              </li>
+              <li className="mb-2">
+                <span className="font-bold">Especie:</span> {character.species}
+              </li>
+              <li className="mb-2">
+                <span className="font-bold">Género:</span> {character.gender}
+              </li>
+              <li className="mb-2">
+                <span className="font-bold">Origen:</span> {character.origin?.name}
+              </li>
+              <li className="mb-2">
+                <span className="font-bold">Ubicación:</span> {character.location?.name}
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
-    </section>
+      <h2 className="text-2xl font-bold mb-2">Aparece en los episodios:</h2>
+      <div className="flex flex-wrap gap-2">
+        {character.episode?.map((episode, index) => {
+          const episodeNumber = episode.split('/').pop().replace('.json', '');
+          return (
+            <button
+              key={index}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Episodio {episodeNumber}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
-export default AlienPage;
+export default CharacterPage;

@@ -50,12 +50,11 @@ function NavBar() {
             <span className="block text-gray-700 text-sm font-semibold">
               Janer Muñoz
             </span>
-            <a
-              href="javascript:void(0)"
-              className="block mt-px text-gray-600 hover:text-indigo-600 text-xs"
-            >
-              Ver Perfil
-            </a>
+            <Link to={"/Acerca-de"} >
+              <div className="block mt-px text-gray-600 hover:text-indigo-600 text-xs">
+                Ver Perfil
+              </div>
+            </Link>
           </div>
         </div>
       </div>
